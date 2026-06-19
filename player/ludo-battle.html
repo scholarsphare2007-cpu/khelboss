@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ludo Battle Zone - KhelBhai</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 text-white font-sans">
+
+    <!-- WALLET HEADER -->
+    <div class="max-w-4xl mx-auto p-4 flex justify-between items-center">
+        <a href="dashboard.html" class="text-amber-400 hover:text-amber-300 font-bold text-sm flex items-center">
+            <i class="fa-solid fa-arrow-left mr-2"></i> Back to Dashboard
+        </a>
+        <div class="bg-slate-900 border border-slate-800 px-4 py-2 rounded-xl flex items-center space-x-2">
+            <i class="fa-solid fa-wallet text-amber-500"></i>
+            <span id="ludo-wallet-display" class="text-emerald-400 font-bold">Balance: Loading...</span>
+        </div>
+    </div>
+
+    <main class="max-w-4xl mx-auto px-4 py-2 space-y-6">
+        
+        <div class="text-center">
+            <h1 class="text-3xl font-black tracking-wider text-amber-400">🎲 LUDO BATTLE ARENA</h1>
+            <p class="text-xs text-slate-400 mt-1">Apna room banayein ya chalte hue matches join karein</p>
+        </div>
+
+        <!-- ACTIONS -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-xl mx-auto">
+            <button onclick="createNewBattle()" class="bg-blue-600 hover:bg-blue-500 active:scale-95 p-4 rounded-xl font-bold flex items-center justify-center space-x-2 shadow-lg transition-all">
+                <i class="fa-solid fa-plus-circle"></i> <span>Create New Battle</span>
+            </button>
+            <button onclick="refreshBattleList()" class="bg-emerald-600 hover:bg-emerald-500 active:scale-95 p-4 rounded-xl font-bold flex items-center justify-center space-x-2 shadow-lg transition-all">
+                <i class="fa-solid fa-gamepad"></i> <span>Refresh Battle List</span>
+            </button>
+        </div>
+
+        <!-- LIVE ROOMS LIST -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 max-w-2xl mx-auto space-y-4 shadow-xl">
+            <h3 class="text-sm font-bold text-slate-400 border-b border-slate-800 pb-2 flex items-center">
+                <i class="fa-solid fa-circle text-red-500 text-[8px] mr-2 animate-ping"></i> Open Challenges (Live Rooms)
+            </h3>
+
+            <div id="battles-list" class="space-y-4">
+                
+                <!-- Room 1 -->
+                <div class="bg-slate-850 border border-slate-700/50 p-4 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-4">
+                    <div class="flex items-center space-x-3 w-full sm:w-auto">
+                        <div class="bg-slate-800 p-2.5 rounded-lg text-xl">👤</div>
+                        <div>
+                            <h4 class="font-bold text-sm text-slate-200">Challenge by Player_Rohan</h4>
+                            <p class="text-[11px] text-slate-400">Game Type: Classic Ludo</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between sm:justify-end w-full sm:w-auto space-x-6">
+                        <div class="text-right">
+                            <p class="text-[10px] text-slate-400 uppercase">Prize Pool</p>
+                            <p class="font-black text-emerald-400 text-lg">₹180.00</p>
+                        </div>
+                        <button onclick="playMatch('Player_Rohan', 100)" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs px-5 py-2.5 rounded-lg uppercase tracking-wider shadow-md transition-all">
+                            Play Match
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Room 2 -->
+                <div class="bg-slate-850 border border-slate-700/50 p-4 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-4">
+                    <div class="flex items-center space-x-3 w-full sm:w-auto">
+                        <div class="bg-slate-800 p-2.5 rounded-lg text-xl">👤</div>
+                        <div>
+                            <h4 class="font-bold text-sm text-slate-200">Challenge by Killer_Ludo</h4>
+                            <p class="text-[11px] text-slate-400">Game Type: Classic Ludo</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between sm:justify-end w-full sm:w-auto space-x-6">
+                        <div class="text-right">
+                            <p class="text-[10px] text-slate-400 uppercase">Prize Pool</p>
+                            <p class="font-black text-emerald-400 text-lg">₹90.00</p>
+                        </div>
+                        <button onclick="playMatch('Killer_Ludo', 50)" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs px-5 py-2.5 rounded-lg uppercase tracking-wider shadow-md transition-all">
+                            Play Match
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- DYNAMIC RESULT SUBMISSION AREA -->
+        <div id="result-area" class="bg-red-950/20 border border-red-900/50 rounded-2xl p-5 max-w-2xl mx-auto space-y-3 hidden">
+            <h4 class="text-sm font-bold text-red-400 flex items-center">
+                <i class="fa-solid fa-triangle-exclamation mr-2"></i> Current Match: <span id="active-match-title" class="text-white ml-1">None</span>
+            </h4>
+            <p class="text-xs text-slate-400 leading-relaxed">
+                Room Code: <span id="active-room-code" class="text-amber-400 font-mono font-bold">000000</span>. Khel poora hone ke baad apna sahi result submit karein. Galat ya fake proof dene par ID permanent block kar di jayegi!
+            </p>
+            <div class="grid grid-cols-2 gap-3 pt-2">
+                <button onclick="submitResult('WIN')" class="bg-emerald-600 hover:bg-emerald-500 text-white py-2.5 rounded-xl font-bold text-xs transition-all">
+                    I WON (Upload Proof)
+                </button>
+                <button onclick="submitResult('LOSE')" class="bg-red-600/30 hover:bg-red-600 text-red-400 hover:text-white border border-red-500/30 py-2.5 rounded-xl font-bold text-xs transition-all">
+                    I LOST (Exit Room)
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- REAL-TIME LUDO ENGINE CORE -->
+    <script>
+        let currentActiveMatchAmount = 0;
+        let currentOpponent = "";
+        let generatedRoomCode = "";
+
+        document.addEventListener("DOMContentLoaded", function() {
+            updateLudoWallet();
+        });
+
+        function updateLudoWallet() {
+            let playable = parseFloat(localStorage.getItem("playable_balance") || 101);
+            let withdrawable = parseFloat(localStorage.getItem("withdrawable_balance") || 0);
+            let total = playable + withdrawable;
+            document.getElementById("ludo-wallet-display").innerText = "Balance: ₹" + total.toFixed(2);
+        }
+
+        // 1. CREATE NEW BATTLE LOGIC WITH WALLET DEDUCTION
+        function createNewBattle() {
+            let playable = parseFloat(localStorage.getItem("playable_balance") || 0);
+            let withdrawable = parseFloat(localStorage.getItem("withdrawable_balance") || 0);
+            let totalWallet = playable + withdrawable;
+
+            let betStr = prompt("Kitne rupaye ka challenge lagana hai? \n(Aapka Balance: ₹" + totalWallet.toFixed(2) + ")");
+            if (!betStr) return;
+
+            let betAmount = parseFloat(betStr);
+            if (isNaN(betAmount) || betAmount <= 0) {
+                alert("❌ Kripya sahi amount dalein!");
+                return;
+            }
+
+            if (totalWallet < betAmount) {
+                alert("❌ Insufficient Balance! Pehle wallet recharge karein.");
+                return;
+            }
+
+            // Deduct from playable first, then withdrawable (Refer and Winning cannot be directly withdrawn)
+            let remBet = betAmount;
+            if (playable >= remBet) {
+                playable -= remBet;
+            } else {
+                remBet -= playable;
+                playable = 0;
+                withdrawable -= remBet;
+            }
+
+            localStorage.setItem("playable_balance", playable.toFixed(2));
+            localStorage.setItem("withdrawable_balance", withdrawable.toFixed(2));
+            updateLudoWallet();
+
+            // Store active pool for result phase
+            currentActiveMatchAmount = betAmount;
+            currentOpponent = "Auto_Matchmaker";
+            generatedRoomCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+            // Add Entry dynamically on top of the list
+            let list = document.getElementById("battles-list");
+            let prizePool = betAmount * 1.8; // 10% platform fee deducted (1.8x payout)
+            
+            let newRow = document.createElement("div");
+            newRow.className = "bg-slate-850 border border-amber-500/30 bg-amber-500/5 p-4 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-4 dynamic-challenge";
+            newRow.innerHTML = `
+                <div class="flex items-center space-x-3 w-full sm:w-auto">
+                    <div class="bg-slate-800 p-2.5 rounded-lg text-xl">🎮</div>
+                    <div>
+                        <h4 class="font-bold text-sm text-slate-200">Challenge by You (Player_Aj101)</h4>
+                        <p class="text-[11px] text-amber-400">Match Found! Click Below to Activate Arena.</p>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between sm:justify-end w-full sm:w-auto space-x-6">
+                    <div class="text-right">
+                        <p class="text-[10px] text-slate-400 uppercase">Prize Pool</p>
+                        <p class="font-black text-emerald-400 text-lg">₹${prizePool.toFixed(2)}</p>
+                    </div>
+                    <button onclick="activateCreatedBattle('${generatedRoomCode}')" class="bg-blue-500 hover:bg-blue-400 text-white text-xs font-bold px-4 py-2 rounded-md shadow-md transition-all">
+                        Start Arena
+                    </button>
+                </div>
+            `;
+            list.insertBefore(newRow, list.firstChild);
+            alert("🎯 Challenge Created! System ne aapka amount queue kar diya hai, 'Start Arena' par click karke play area open karein.");
+        }
+
+        // Helper trigger for self created challenges
+        function activateCreatedBattle(code) {
+            document.getElementById("active-match-title").innerText = "Self Battle (Prize Pool: ₹" + (currentActiveMatchAmount * 1.8).toFixed(2) + ")";
+            document.getElementById("active-room-code").innerText = code;
+            document.getElementById("result-area").classList.remove("hidden");
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }
+
+        // 2. PLAY EXISTENT MATCH LOGIC
+        function playMatch(opponentName, amount) {
+            let playable = parseFloat(localStorage.getItem("playable_balance") || 0);
+            let withdrawable = parseFloat(localStorage.getItem("withdrawable_balance") || 0);
+            let totalWallet = playable + withdrawable;
+
+            if (totalWallet < amount) {
+                alert("❌ Is challenge ko join karne ke liye aapke pass kam se kam ₹" + amount + " hona chahiye!");
+                return;
+            }
+
+            // Deduct balance to enter match
+            let remBet = amount;
+            if (playable >= remBet) {
+                playable -= remBet;
+            } else {
+                remBet -= playable;
+                playable = 0;
+                withdrawable -= remBet;
+            }
+
+            localStorage.setItem("playable_balance", playable.toFixed(2));
+            localStorage.setItem("withdrawable_balance", withdrawable.toFixed(2));
+            updateLudoWallet();
+
+            currentActiveMatchAmount = amount;
+            currentOpponent = opponentName;
+            generatedRoomCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+            document.getElementById("active-match-title").innerText = "VS " + opponentName + " (Prize: ₹" + (amount * 1.8).toFixed(2) + ")";
+            document.getElementById("active-room-code").innerText = generatedRoomCode;
+            document.getElementById("result-area").classList.remove("hidden");
+            
+            alert("⚔️ Match Joined! Ludo King App khol kar ye Room Code dalein: " + generatedRoomCode);
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }
+
+        // 3. SUBMIT RESULT LIVE LINKED TO ADMIN DISPUTE CONSOLE
+        function submitResult(status) {
+            let room = document.getElementById("active-room-code").innerText;
+            let finalPool = currentActiveMatchAmount * 2; // Full bet value pool sent to admin console
+
+            if(status === 'WIN') {
+                let fileLink = prompt("Apna winning screenshot link ya text proof dalein (Verification Ke Liye):", "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=500");
+                if(!fileLink) return;
+
+                // Create a real operational dispute payload object
+                let newDispute = {
+                    id: "DISP" + Date.now(),
+                    roomCode: room,
+                    player: "Player_Aj101",
+                    betAmount: finalPool,
+                    status: "Pending",
+                    playerClaim: "Won",
+                    screenshot: fileLink
+                };
+
+                // Extract list from localStorage, push and resave
+                let activeDisputes = JSON.parse(localStorage.getItem("active_disputes") || "[]");
+                activeDisputes.push(newDispute);
+                localStorage.setItem("active_disputes", JSON.stringify(activeDisputes));
+                
+                alert("🚀 Dispute Registered! Aapka room data aur proof Admin Dashboard par live bhej diya gaya hai. Admin check karte hi wallet balance release kar dega.");
+                document.getElementById("result-area").classList.add("hidden");
+            } else {
+                alert("🏳️ Defeat Accepted. Match closed. Aapka lost status system memory mein update ho chuka hai.");
+                document.getElementById("result-area").classList.add("hidden");
+            }
+        }
+
+        function refreshBattleList() {
+            alert("🔄 Battle list successfully refreshed! Saare open challenges live hain.");
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Wallet - KhelBhai</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 text-white font-sans">
+
+    <div class="max-w-4xl mx-auto p-4 flex justify-between items-center">
+        <a href="dashboard.html" class="text-amber-400 hover:text-amber-300 font-bold text-sm flex items-center">
+            <i class="fa-solid fa-arrow-left mr-2"></i> Back to Dashboard
+        </a>
+        <div class="bg-slate-900 border border-slate-800 px-3 py-1 rounded text-xs text-slate-400">
+            Secure Wallet System
+        </div>
+    </div>
+
+    <main class="max-w-4xl mx-auto px-4 py-2 space-y-6">
+        
+        <div class="text-center">
+            <h1 class="text-3xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-amber-400">💰 PASSBOOK & WALLET</h1>
+            <p class="text-xs text-slate-400 mt-1">Apna balance manage karein, deposit aur withdraw karein instant</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
+            <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-2 shadow-xl">
+                <div class="flex justify-between items-center text-slate-400 text-xs font-bold uppercase tracking-wider">
+                    <span>Playable Balance</span>
+                    <i class="fa-solid fa-gamepad text-blue-400"></i>
+                </div>
+                <h2 id="playable-disp" class="text-3xl font-black text-blue-400">₹0.00</h2>
+                <p class="text-[10px] text-slate-500">Isme aapka added deposit aur referral bonus hota hai (Non-Withdrawable).</p>
+            </div>
+
+            <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-2 shadow-xl">
+                <div class="flex justify-between items-center text-slate-400 text-xs font-bold uppercase tracking-wider">
+                    <span>Withdrawable Winnings</span>
+                    <i class="fa-solid fa-trophy text-amber-500"></i>
+                </div>
+                <h2 id="withdrawable-disp" class="text-3xl font-black text-emerald-400">₹0.00</h2>
+                <p class="text-[10px] text-slate-500">Isme aapka jeeta hua amount hota hai jise aap bank mein nikal sakte hain.</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto pt-4">
+            
+            <!-- DEPOSIT CASH CARD -->
+            <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-4 shadow-xl">
+                <h3 class="text-sm font-bold text-slate-200 border-b border-slate-800 pb-2"><i class="fa-solid fa-square-plus text-emerald-500 mr-1"></i> Deposit Cash (Add Money)</h3>
+                
+                <div id="deposit-input-form" class="space-y-4">
+                    <div class="space-y-2">
+                        <label class="text-xs text-slate-400 font-medium">Enter Amount (₹)</label>
+                        <input id="deposit-amount" type="number" placeholder="Eg. 500" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 font-bold text-emerald-400">
+                    </div>
+                    <button onclick="executeDeposit()" class="w-full bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all shadow-lg shadow-emerald-950">
+                        Add Cash Instantly
+                    </button>
+                </div>
+
+                <!-- DYNAMIC QR SCANNER GATEWAY -->
+                <div id="qr-gateway" class="hidden space-y-4 border-t border-slate-800 pt-4 text-center">
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 inline-block mx-auto">
+                        <img src="apna_scanner.jpg" alt="QR Scanner" class="w-40 h-40 mx-auto rounded border-2 border-white p-1 bg-white">
+                        <p class="text-[10px] text-slate-400 mt-2 font-bold uppercase"><i class="fa-solid fa-qrcode mr-1"></i> Scan to Pay</p>
+                    </div>
+
+                    <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-left space-y-1">
+                        <p class="text-[10px] text-slate-500 uppercase font-black">UPI Details / Manually Pay:</p>
+                        <p class="text-xs text-slate-300 font-bold">Name: <span class="text-white">KhelBhai Official</span></p>
+                        <p class="text-xs text-slate-300 font-bold">UPI ID: <span class="text-amber-400 font-mono select-all">apniupiid@ybl</span></p>
+                    </div>
+
+                    <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-center">
+                        <span class="text-[10px] text-slate-500 block uppercase font-bold">Payable Amount:</span>
+                        <span id="qr-amt-text" class="text-base font-black text-amber-400">₹0.00</span>
+                    </div>
+
+                    <div class="text-left space-y-1">
+                        <label class="text-[11px] text-slate-400 font-bold uppercase">Enter 12-Digit UTR / Ref No.</label>
+                        <input id="utr-input" type="text" maxlength="12" placeholder="e.g. 3498XXXXXXXX" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm font-mono tracking-widest text-center focus:outline-none focus:border-amber-500 font-bold text-slate-200">
+                    </div>
+
+                    <div class="flex space-x-2 pt-1">
+                        <button onclick="cancelQR()" class="w-1/3 bg-slate-800 hover:bg-slate-700 text-slate-400 font-bold py-2 rounded-xl text-xs uppercase tracking-wider transition-all">
+                            Cancel
+                        </button>
+                        <button onclick="submitUTRRequest()" class="w-2/3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-2 rounded-xl text-xs uppercase tracking-wider transition-all">
+                            Submit UTR <i class="fa-solid fa-paper-plane ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ADVANCED WITHDRAW CASH CARD -->
+            <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-4 shadow-xl">
+                <h3 class="text-sm font-bold text-slate-200 border-b border-slate-800 pb-2"><i class="fa-solid fa-money-bill-wave text-amber-500 mr-1"></i> Cash Out (Withdraw Winnings)</h3>
+                
+                <!-- Main Method Selector -->
+                <div class="grid grid-cols-2 gap-2 p-1 bg-slate-950 border border-slate-800 rounded-xl">
+                    <button id="method-bank-btn" onclick="switchWithdrawMethod('bank')" class="bg-amber-500 text-slate-950 font-bold py-2 rounded-lg text-xs uppercase tracking-wider transition-all flex items-center justify-center">
+                        <i class="fa-solid fa-building-columns mr-1.5"></i> Bank Card
+                    </button>
+                    <button id="method-upi-btn" onclick="switchWithdrawMethod('upi')" class="text-slate-400 font-bold py-2 rounded-lg text-xs uppercase tracking-wider transition-all hover:text-white flex items-center justify-center">
+                        <i class="fa-solid fa-wallet mr-1.5"></i> UPI ID
+                    </button>
+                </div>
+
+                <!-- Sub-Option Type Selectors (Saved vs New) -->
+                <div class="grid grid-cols-2 gap-4 text-center border-b border-slate-800 pb-2 text-xs font-bold uppercase">
+                    <button id="type-saved-btn" onclick="switchWithdrawType('saved')" class="text-amber-400 border-b-2 border-amber-400 pb-1">Saved Details</button>
+                    <button id="type-new-btn" onclick="switchWithdrawType('new')" class="text-slate-500 hover:text-slate-300 pb-1">New Details</button>
+                </div>
+
+                <!-- 1. BANK CARD CONTAINER -->
+                <div id="bank-method-container" class="space-y-3">
+                    <div id="bank-saved-view" class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs space-y-1"></div>
+                    <div id="bank-new-view" class="hidden space-y-2 bg-slate-950/50 p-3 border border-slate-800 rounded-xl">
+                        <input id="new-bank-holder" type="text" placeholder="Account Holder Name" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-amber-500 text-slate-200 font-bold">
+                        <input id="new-bank-name" type="text" placeholder="Bank Name (e.g. SBI, HDFC)" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-amber-500 text-slate-200 font-bold">
+                        <input id="new-bank-acc" type="text" placeholder="Account Number" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-amber-500 text-slate-200 font-mono font-bold">
+                        <input id="new-bank-ifsc" type="text" placeholder="IFSC Code" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-amber-500 text-slate-200 font-mono font-bold">
+                        <button onclick="saveOrUpdateDetails('bank')" class="w-full bg-slate-800 hover:bg-slate-700 text-amber-400 font-bold py-1.5 rounded-lg text-[11px] border border-slate-700 transition-all uppercase tracking-wider">
+                            Save / Update Bank Details
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 2. UPI ID CONTAINER -->
+                <div id="upi-method-container" class="hidden space-y-3">
+                    <div id="upi-saved-view" class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs space-y-1"></div>
+                    <div id="upi-new-view" class="hidden space-y-2 bg-slate-950/50 p-3 border border-slate-800 rounded-xl">
+                        <input id="new-upi-id" type="text" placeholder="Enter UPI ID (e.g. name@paytm)" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-amber-500 text-amber-400 font-mono font-bold">
+                        <button onclick="saveOrUpdateDetails('upi')" class="w-full bg-slate-800 hover:bg-slate-700 text-amber-400 font-bold py-1.5 rounded-lg text-[11px] border border-slate-700 transition-all uppercase tracking-wider">
+                            Save / Update UPI Details
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Amount Box -->
+                <div class="space-y-2 pt-2 border-t border-slate-800">
+                    <label class="text-xs text-slate-400 font-medium">Enter Amount (₹)</label>
+                    <input id="withdraw-amount" type="number" placeholder="Min 200" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-amber-500 font-bold text-amber-500">
+                </div>
+
+                <button onclick="executeWithdrawal()" class="w-full bg-amber-500 hover:bg-amber-400 active:scale-95 text-slate-950 font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all shadow-lg shadow-amber-950">
+                    Request Withdrawal
+                </button>
+            </div>
+        </div>
+
+        <!-- NEW: TRANSACTION HISTORY SECTION (LAST 10 RECORDS) -->
+        <div class="max-w-2xl mx-auto pt-4">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
+                <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                    <h3 class="text-sm font-bold text-slate-200"><i class="fa-solid fa-clock-rotate-left text-blue-400 mr-1"></i> Last 10 Transaction Requests</h3>
+                    <span class="text-[10px] bg-slate-950 border border-slate-800 text-slate-400 px-2 py-0.5 rounded font-mono">Live Logs</span>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-slate-300">
+                        <thead>
+                            <tr class="border-b border-slate-800 text-slate-500 text-[10px] font-black uppercase tracking-wider">
+                                <th class="py-2">Type</th>
+                                <th class="py-2">Amount</th>
+                                <th class="py-2">Reference/ID</th>
+                                <th class="py-2">Date & Time</th>
+                                <th class="py-2 text-right">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="history-table-body">
+                            <!-- Rows will be injected by JavaScript dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="max-w-2xl mx-auto bg-slate-900/40 border border-slate-800/60 p-4 rounded-xl text-center text-xs text-slate-500">
+            <i class="fa-solid fa-shield-halved mr-1 text-slate-400"></i> <b>System Rules:</b> Daily minimum withdrawal limit is <b>₹200</b> and maximum is <b>₹5,000,000</b>. Bonus & deposit balances can only be used to play games.
+        </div>
+
+    </main>
+
+    <script>
+        let globalDepositAmount = 0;
+        let activeMethod = 'bank'; 
+        let activeType = 'saved';  
+
+        document.addEventListener("DOMContentLoaded", function() {
+            if (localStorage.getItem("playable_balance") === null) {
+                localStorage.setItem("playable_balance", "101.00");
+                localStorage.setItem("withdrawable_balance", "0.00");
+            }
+            refreshWalletStats();
+            renderSavedViews();
+            renderTransactionHistory(); // Load history logs instantly
+        });
+
+        function refreshWalletStats() {
+            let playable = parseFloat(localStorage.getItem("playable_balance") || 0);
+            let withdrawable = parseFloat(localStorage.getItem("withdrawable_balance") || 0);
+
+            document.getElementById("playable-disp").innerText = "₹" + playable.toFixed(2);
+            document.getElementById("withdrawable-disp").innerText = "₹" + withdrawable.toFixed(2);
+        }
+
+        function renderSavedViews() {
+            const bankSavedBox = document.getElementById("bank-saved-view");
+            const upiSavedBox = document.getElementById("upi-saved-view");
+
+            let savedBank = localStorage.getItem("user_bank_name");
+            let savedUPI = localStorage.getItem("user_upi_id");
+
+            if (!savedBank) {
+                bankSavedBox.innerHTML = `<p class="text-slate-500 text-center py-2 italic">❌ No saved bank card found. Please add from 'New Details' tab.</p>`;
+            } else {
+                bankSavedBox.innerHTML = `
+                    <p class="text-[10px] text-emerald-400 uppercase font-black mb-1"><i class="fa-solid fa-circle-check"></i> Linked Bank Card</p>
+                    <p class="text-slate-300">Holder: <span class="text-white font-bold">${localStorage.getItem("user_bank_holder")}</span></p>
+                    <p class="text-slate-300">Bank: <span class="text-white font-bold">${savedBank}</span></p>
+                    <p class="text-slate-300">A/C No: <span class="text-white font-mono font-bold">${localStorage.getItem("user_bank_acc")}</span></p>
+                    <p class="text-slate-300">IFSC: <span class="text-slate-400 font-mono">${localStorage.getItem("user_bank_ifsc")}</span></p>
+                `;
+            }
+
+            if (!savedUPI) {
+                upiSavedBox.innerHTML = `<p class="text-slate-500 text-center py-2 italic">❌ No saved UPI ID found. Please add from 'New Details' tab.</p>`;
+            } else {
+                upiSavedBox.innerHTML = `
+                    <p class="text-[10px] text-emerald-400 uppercase font-black mb-1"><i class="fa-solid fa-circle-check"></i> Linked UPI Address</p>
+                    <p class="text-slate-300">UPI ID: <span class="text-amber-400 font-mono font-bold select-all">${savedUPI}</span></p>
+                `;
+            }
+        }
+
+        // RENDER LAST 10 TRANSACTION LOGS FUNCTION
+        function renderTransactionHistory() {
+            const tableBody = document.getElementById("history-table-body");
+            
+            // Fetch records safely from existing arrays
+            let deposits = JSON.parse(localStorage.getItem("deposit_db") || "[]");
+            let withdrawals = JSON.parse(localStorage.getItem("withdraw_db") || "[]");
+
+            // Format deposits for common rendering interface
+            let formattedDeposits = deposits.map(d => ({
+                type: 'DEPOSIT',
+                amount: d.amount,
+                ref: d.utr,
+                date: d.date,
+                status: d.status
+            }));
+
+            // Format withdrawals for common rendering interface
+            let formattedWithdrawals = withdrawals.map(w => ({
+                type: 'WITHDRAW',
+                amount: w.amount,
+                ref: w.requestID,
+                date: w.date,
+                status: w.status
+            }));
+
+            // Merge and sort by timestamp (newest first)
+            let combinedLogs = [...formattedDeposits, ...formattedWithdrawals];
+            combinedLogs.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            // Extract exactly up to the last 10 entries
+            let last10 = combinedLogs.slice(0, 10);
+
+            if (last10.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="5" class="py-4 text-center text-slate-500 italic">No transaction history logs found.</td></tr>`;
+                return;
+            }
+
+            tableBody.innerHTML = "";
+            last10.forEach(item => {
+                let statusBadge = "";
+                if (item.status === "Pending") {
+                    statusBadge = `<span class="text-[10px] font-bold bg-amber-950/80 text-amber-400 border border-amber-800/60 px-2 py-0.5 rounded-md"><i class="fa-solid fa-spinner animate-spin mr-1 text-[8px]"></i>Pending</span>`;
+                } else if (item.status === "Approved") {
+                    statusBadge = `<span class="text-[10px] font-bold bg-emerald-950/80 text-emerald-400 border border-emerald-800/60 px-2 py-0.5 rounded-md"><i class="fa-solid fa-circle-check mr-1 text-[8px]"></i>Approved</span>`;
+                } else {
+                    statusBadge = `<span class="text-[10px] font-bold bg-rose-950/80 text-rose-400 border border-rose-800/60 px-2 py-0.5 rounded-md"><i class="fa-solid fa-circle-xmark mr-1 text-[8px]"></i>Rejected</span>`;
+                }
+
+                let typeLabel = item.type === "DEPOSIT" 
+                    ? `<span class="text-emerald-400 font-bold text-[11px]"><i class="fa-solid fa-arrow-turn-down text-[9px] mr-1"></i>Deposit</span>`
+                    : `<span class="text-amber-500 font-bold text-[11px]"><i class="fa-solid fa-arrow-turn-up text-[9px] mr-1"></i>Withdraw</span>`;
+
+                let row = `
+                    <tr class="border-b border-slate-900/60 hover:bg-slate-900/30 transition-all">
+                        <td class="py-2.5 font-medium">${typeLabel}</td>
+                        <td class="py-2.5 font-bold ${item.type === 'DEPOSIT' ? 'text-emerald-400' : 'text-slate-200'}">₹${parseFloat(item.amount).toFixed(2)}</td>
+                        <td class="py-2.5 font-mono text-[11px] text-slate-400">${item.ref}</td>
+                        <td class="py-2.5 text-[11px] text-slate-500">${item.date}</td>
+                        <td class="py-2.5 text-right">${statusBadge}</td>
+                    </tr>
+                `;
+                tableBody.innerHTML += row;
+            });
+        }
+
+        function switchWithdrawMethod(method) {
+            activeMethod = method;
+            const bankBtn = document.getElementById("method-bank-btn");
+            const upiBtn = document.getElementById("method-upi-btn");
+            const bankCont = document.getElementById("bank-method-container");
+            const upiCont = document.getElementById("upi-method-container");
+
+            if (method === 'bank') {
+                bankBtn.className = "bg-amber-500 text-slate-950 font-bold py-2 rounded-lg text-xs uppercase tracking-wider transition-all flex items-center justify-center";
+                upiBtn.className = "text-slate-400 font-bold py-2 rounded-lg text-xs uppercase tracking-wider transition-all hover:text-white flex items-center justify-center";
+                bankCont.classList.remove("hidden");
+                upiCont.classList.add("hidden");
+            } else {
+                upiBtn.className = "bg-amber-500 text-slate-950 font-bold py-2 rounded-lg text-xs uppercase tracking-wider transition-all flex items-center justify-center";
+                bankBtn.className = "text-slate-400 font-bold py-2 rounded-lg text-xs uppercase tracking-wider transition-all hover:text-white flex items-center justify-center";
+                upiCont.classList.remove("hidden");
+                bankCont.classList.add("hidden");
+            }
+            switchWithdrawType('saved'); 
+        }
+
+        function switchWithdrawType(type) {
+            activeType = type;
+            const savedBtn = document.getElementById("type-saved-btn");
+            const newBtn = document.getElementById("type-new-btn");
+
+            const bSaved = document.getElementById("bank-saved-view");
+            const bNew = document.getElementById("bank-new-view");
+            const uSaved = document.getElementById("upi-saved-view");
+            const uNew = document.getElementById("upi-new-view");
+
+            if (type === 'saved') {
+                savedBtn.className = "text-amber-400 border-b-2 border-amber-400 pb-1";
+                newBtn.className = "text-slate-500 hover:text-slate-300 pb-1";
+                bSaved.classList.remove("hidden");
+                bNew.classList.add("hidden");
+                uSaved.classList.remove("hidden");
+                uNew.classList.add("hidden");
+            } else {
+                newBtn.className = "text-amber-400 border-b-2 border-amber-400 pb-1";
+                savedBtn.className = "text-slate-500 hover:text-slate-300 pb-1";
+                bSaved.classList.add("hidden");
+                bNew.classList.remove("hidden");
+                uSaved.classList.add("hidden");
+                uNew.classList.remove("hidden");
+            }
+        }
+
+        function saveOrUpdateDetails(mode) {
+            if (mode === 'bank') {
+                let holder = document.getElementById("new-bank-holder").value.trim();
+                let name = document.getElementById("new-bank-name").value.trim();
+                let acc = document.getElementById("new-bank-acc").value.trim();
+                let ifsc = document.getElementById("new-bank-ifsc").value.trim();
+
+                if (!holder || !name || !acc || !ifsc) {
+                    alert("❌ Sabhi Bank Card fields bharna mandatory hai!");
+                    return;
+                }
+                localStorage.setItem("user_bank_holder", holder);
+                localStorage.setItem("user_bank_name", name);
+                localStorage.setItem("user_bank_acc", acc);
+                localStorage.setItem("user_bank_ifsc", ifsc);
+                alert("💾 Bank details successfully save/update ho gayi hain!");
+            } else {
+                let upiVal = document.getElementById("new-upi-id").value.trim();
+                if (!upiVal || !upiVal.includes("@")) {
+                    alert("❌ Valid UPI ID enter karein!");
+                    return;
+                }
+                localStorage.setItem("user_upi_id", upiVal);
+                alert("💾 UPI ID successfully save/update ho gayi hai!");
+            }
+            renderSavedViews();
+            switchWithdrawType('saved');
+        }
+
+        function executeDeposit() {
+            let amtInput = document.getElementById("deposit-amount");
+            let amount = parseFloat(amtInput.value);
+
+            if (isNaN(amount) || amount < 100) {
+                alert("❌ Kripya kam se kam ₹100 enter karein!");
+                return;
+            }
+
+            globalDepositAmount = amount;
+            document.getElementById("qr-amt-text").innerText = "₹" + amount.toFixed(2);
+            document.getElementById("deposit-input-form").classList.add("hidden");
+            document.getElementById("qr-gateway").classList.remove("hidden");
+        }
+
+        function cancelQR() {
+            document.getElementById("deposit-input-form").classList.remove("hidden");
+            document.getElementById("qr-gateway").classList.add("hidden");
+            document.getElementById("utr-input").value = "";
+        }
+
+        function submitUTRRequest() {
+            let utrVal = document.getElementById("utr-input").value.trim();
+            if (utrVal.length < 10) {
+                alert("❌ Kripya sahi UTR Number enter karein!");
+                return;
+            }
+
+            let depositDB = JSON.parse(localStorage.getItem("deposit_db") || "[]");
+            if (depositDB.find(item => item.utr === utrVal)) {
+                alert("⚠️ Ye UTR pehle se process mein hai!");
+                return;
+            }
+
+            depositDB.push({
+                player: "Player_Aj101",
+                amount: globalDepositAmount,
+                utr: utrVal,
+                status: "Pending",
+                date: new Date().toLocaleString()
+            });
+
+            localStorage.setItem("deposit_db", JSON.stringify(depositDB));
+            alert("⏳ Deposit Request Sent! Admin ke approve karte hi balance add ho jayenge.");
+            document.getElementById("deposit-amount").value = "";
+            cancelQR();
+            renderTransactionHistory(); // Live update real-time
+        }
+
+        function executeWithdrawal() {
+            let amtInput = document.getElementById("withdraw-amount");
+            let amount = parseFloat(amtInput.value);
+            let withdrawable = parseFloat(localStorage.getItem("withdrawable_balance") || 0);
+
+            if (isNaN(amount) || amount <= 0) {
+                alert("❌ Kripya valid amount enter karein!");
+                return;
+            }
+
+            if (amount < 200 || amount > 5000000) {
+                alert("⚠️ Ek din mein minimum withdrawal ₹200 aur maximum ₹5,000,000 allowed hai.");
+                return;
+            }
+
+            if (amount > withdrawable) {
+                alert("❌ Insufficient Winnings!");
+                return;
+            }
+
+            let transactionAccount = {};
+
+            if (activeType === 'saved') {
+                if (activeMethod === 'bank') {
+                    let sBank = localStorage.getItem("user_bank_name");
+                    if (!sBank) { alert("❌ Pehle Bank Details save karein!"); return; }
+                    transactionAccount = {
+                        type: "Saved Bank Account",
+                        bankName: sBank,
+                        upiId: "N/A"
+                    };
+                } else {
+                    let sUpi = localStorage.getItem("user_upi_id");
+                    if (!sUpi) { alert("❌ Pehle UPI ID save karein!"); return; }
+                    transactionAccount = {
+                        type: "Saved UPI Address",
+                        upiId: sUpi
+                    };
+                }
+            } else {
+                if (activeMethod === 'bank') {
+                    let holder = document.getElementById("new-bank-holder").value.trim();
+                    let name = document.getElementById("new-bank-name").value.trim();
+                    let acc = document.getElementById("new-bank-acc").value.trim();
+                    let ifsc = document.getElementById("new-bank-ifsc").value.trim();
+
+                    if (!holder || !name || !acc || !ifsc) {
+                        alert("❌ Form data incomplete!");
+                        return;
+                    }
+                    transactionAccount = {
+                        type: "New Custom Bank Card",
+                        bankName: name,
+                        upiId: "N/A"
+                    };
+                } else {
+                    let upiVal = document.getElementById("new-upi-id").value.trim();
+                    if (!upiVal || !upiVal.includes("@")) {
+                        alert("❌ Valid UPI ID daalein!");
+                        return;
+                    }
+                    transactionAccount = {
+                        type: "New Custom UPI Address",
+                        upiId: upiVal
+                    };
+                }
+            }
+
+            withdrawable -= amount;
+            localStorage.setItem("withdrawable_balance", withdrawable.toFixed(2));
+
+            let withdrawDB = JSON.parse(localStorage.getItem("withdraw_db") || "[]");
+            withdrawDB.push({
+                requestID: "WID" + Math.floor(Math.random() * 900000 + 100000),
+                player: "Player_Aj101",
+                amount: amount,
+                account: transactionAccount,
+                status: "Pending",
+                date: new Date().toLocaleString()
+            });
+
+            localStorage.setItem("withdraw_db", JSON.stringify(withdrawDB));
+            alert("💸 Withdrawal Request Sent Successfully! Admin approval ka wait karein.");
+
+            amtInput.value = "";
+            refreshWalletStats();
+            renderTransactionHistory(); // Logs panel live updates instantly
+        }
+    </script>
+</body>
+</html>

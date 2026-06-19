@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dragon vs Tiger - KhelBhai</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 text-white font-sans">
+
+    <div class="max-w-4xl mx-auto p-4 flex justify-between items-center">
+        <a href="dashboard.html" class="text-amber-400 hover:text-amber-300 font-bold text-sm flex items-center">
+            <i class="fa-solid fa-arrow-left mr-2"></i> Back to Dashboard
+        </a>
+        <div class="bg-slate-900 border border-slate-800 px-4 py-2 rounded-xl flex items-center space-x-2">
+            <i class="fa-solid fa-wallet text-amber-500"></i>
+            <span id="game-wallet-display" class="text-emerald-400 font-bold tracking-wide">Balance: Loading...</span>
+        </div>
+    </div>
+
+    <main class="max-w-4xl mx-auto px-4 py-2 text-center space-y-8">
+        <h1 class="text-3xl font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-amber-500">DRAGON VS TIGER</h1>
+        
+        <div class="flex justify-center items-center space-x-12 my-8">
+            <div id="card-dragon" class="bg-red-900/40 border-2 border-red-500 p-6 rounded-2xl w-40 h-56 flex flex-col justify-between items-center shadow-lg shadow-red-900/30 transition-all duration-300">
+                <span class="text-xl font-bold text-red-400">DRAGON</span>
+                <i class="fa-solid fa-dragon text-5xl text-red-500 animate-bounce"></i>
+                <div class="bg-slate-900 px-3 py-1 rounded text-xs text-red-400 font-bold">Multiplier: 1:1</div>
+            </div>
+
+            <div class="text-2xl font-black text-slate-500">VS</div>
+
+            <div id="card-tiger" class="bg-amber-900/40 border-2 border-amber-500 p-6 rounded-2xl w-40 h-56 flex flex-col justify-between items-center shadow-lg shadow-amber-900/30 transition-all duration-300">
+                <span class="text-xl font-bold text-amber-400">TIGER</span>
+                <i class="fa-solid fa-paw text-5xl text-amber-500 animate-bounce"></i>
+                <div class="bg-slate-900 px-3 py-1 rounded text-xs text-amber-400 font-bold">Multiplier: 1:1</div>
+            </div>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl max-w-xl mx-auto space-y-4 shadow-2xl">
+            <h3 class="text-xs font-bold text-slate-400 tracking-wider">
+                SELECTED CHIP: <span id="selected-chip-badge" class="text-amber-400 font-black">₹10</span>
+            </h3>
+            
+            <div class="flex justify-center space-x-4">
+                <button onclick="placeBet('DRAGON')" class="bg-red-600 hover:bg-red-500 active:scale-95 text-white px-6 py-3 rounded-xl font-black text-sm tracking-wider w-1/2 shadow-lg shadow-red-900/50 transition-all">
+                    BET ON DRAGON
+                </button>
+                <button onclick="placeBet('TIGER')" class="bg-amber-500 hover:bg-amber-400 active:scale-95 text-slate-950 px-6 py-3 rounded-xl font-black text-sm tracking-wider w-1/2 shadow-lg shadow-amber-500/30 transition-all">
+                    BET ON TIGER
+                </button>
+            </div>
+            
+            <div class="flex justify-center space-x-3 pt-4 border-t border-slate-800">
+                <button id="chip-10" onclick="selectChip(10)" class="bg-slate-800 border-2 border-amber-400 h-12 w-12 rounded-full text-xs font-bold text-amber-400 transition-all transform hover:scale-110 shadow-md">₹10</button>
+                <button id="chip-50" onclick="selectChip(50)" class="bg-slate-800 border border-slate-700 hover:border-amber-400 h-12 w-12 rounded-full text-xs font-bold text-amber-400 transition-all transform hover:scale-110 shadow-md">₹50</button>
+                <button id="chip-100" onclick="selectChip(100)" class="bg-slate-800 border border-slate-700 hover:border-amber-400 h-12 w-12 rounded-full text-xs font-bold text-amber-400 transition-all transform hover:scale-110 shadow-md">₹100</button>
+                <button id="chip-500" onclick="selectChip(500)" class="bg-slate-800 border border-slate-700 hover:border-amber-400 h-12 w-12 rounded-full text-xs font-bold text-amber-400 transition-all transform hover:scale-110 shadow-md">₹500</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let selectedChip = 10; // Default chip ₹10
+
+        document.addEventListener("DOMContentLoaded", function() {
+            // Check validation to prevent null issues if direct page open
+            if (localStorage.getItem("playable_balance") === null) {
+                localStorage.setItem("playable_balance", "101.00");
+                localStorage.setItem("withdrawable_balance", "0.00");
+            }
+            updateGameWallet();
+        });
+
+        function updateGameWallet() {
+            let playable = parseFloat(localStorage.getItem("playable_balance") || 0);
+            let withdrawable = parseFloat(localStorage.getItem("withdrawable_balance") || 0);
+            let total = playable + withdrawable;
+            document.getElementById("game-wallet-display").innerText = "Balance: ₹" + total.toFixed(2);
+        }
+
+        // Chip select karne ka logic (Visual updates ke sath)
+        function selectChip(amount) {
+            selectedChip = amount;
+            
+            // Badge text badlein
+            document.getElementById("selected-chip-badge").innerText = "₹" + amount;
+            
+            // Saari chips ke styles reset karein
+            [10, 50, 100, 500].forEach(val => {
+                let chipBtn = document.getElementById("chip-" + val);
+                if (chipBtn) {
+                    chipBtn.classList.remove("border-2", "border-amber-400");
+                    chipBtn.classList.add("border", "border-slate-700");
+                }
+            });
+            
+            // Selected waali chip par strong highlight border lagayein
+            let activeChip = document.getElementById("chip-" + amount);
+            if (activeChip) {
+                activeChip.classList.remove("border-slate-700");
+                activeChip.classList.add("border-2", "border-amber-400");
+            }
+        }
+
+        // Bet lagane aur Result ka logic
+        function placeBet(side) {
+            let playable = parseFloat(localStorage.getItem("playable_balance") || 0);
+            let withdrawable = parseFloat(localStorage.getItem("withdrawable_balance") || 0);
+            
+            // Condition Check: Kya balance hai bet ke barabar?
+            if ((playable + withdrawable) < selectedChip) {
+                alert("❌ Insufficient Balance! Khelne ke liye paise nahi hain.");
+                return;
+            }
+
+            // Wallet subtraction order: Pehle playable (bonus) se, fir bacha hua winnings se
+            let remBet = selectedChip;
+            if (playable >= remBet) {
+                playable -= remBet;
+                remBet = 0;
+            } else {
+                remBet -= playable;
+                playable = 0;
+                withdrawable -= remBet;
+            }
+
+            // LocalStorage data write karein
+            localStorage.setItem("playable_balance", playable.toFixed(2));
+            localStorage.setItem("withdrawable_balance", withdrawable.toFixed(2));
+            updateGameWallet();
+
+            // Visual Card animation reset
+            document.getElementById("card-dragon").classList.remove("scale-110", "bg-red-500/30");
+            document.getElementById("card-tiger").classList.remove("scale-110", "bg-amber-500/30");
+
+            alert("🎰 ₹" + selectedChip + " ki bet " + side + " par lag gayi hai! Card khul raha hai...");
+
+            // 1.5 Second ka real game delay animation check
+            setTimeout(function() {
+                // Randomly choose Winner (50% Dragon, 50% Tiger)
+                let winner = Math.random() > 0.5 ? "DRAGON" : "TIGER";
+                
+                // Visual winning highlight effect add karein
+                if(winner === "DRAGON") {
+                    document.getElementById("card-dragon").classList.add("scale-110", "bg-red-500/30");
+                } else {
+                    document.getElementById("card-tiger").classList.add("scale-110", "bg-amber-500/30");
+                }
+
+                // Balance additions check logic
+                if (side === winner) {
+                    let winnings = selectedChip * 2;
+                    // Jeeta hua sara paisa WITHDRAWABLE wallet mein save hoga rules ke mutabik
+                    withdrawable = parseFloat(localStorage.getItem("withdrawable_balance") || 0);
+                    withdrawable += winnings;
+                    localStorage.setItem("withdrawable_balance", withdrawable.toFixed(2));
+                    alert("🎉 JEET GAYE! Winning Side: " + winner + ". ₹" + winnings + " aapki winnings mein add ho gaye!");
+                } else {
+                    alert("❌ HAAR GAYE! Winning Side: " + winner + ". Agli baar koshish karein!");
+                }
+                updateGameWallet();
+            }, 1200);
+        }
+    </script>
+
+</body>
+</html>

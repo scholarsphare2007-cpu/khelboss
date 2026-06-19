@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login & Register - KhelBhai Ludo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-900 text-white font-sans antialiased flex items-center justify-center min-h-screen px-4 selection:bg-amber-500 selection:text-slate-950">
+
+    <div class="w-full max-w-md bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-2xl space-y-6 relative overflow-hidden">
+        
+        <!-- Logo Header -->
+        <div class="text-center">
+            <div class="bg-gradient-to-tr from-amber-500 to-red-500 h-14 w-14 rounded-full flex items-center justify-center font-black text-slate-900 text-xl shadow-lg mx-auto border-2 border-slate-700">KB</div>
+            <h2 class="text-2xl font-black text-amber-400 mt-3 tracking-wide">KhelBhai Ludo</h2>
+            <p id="panel-desc" class="text-xs text-slate-400 mt-1">Apne account mein login karein aur khelna shuru karein.</p>
+        </div>
+
+        <!-- NOTIFICATION BOX -->
+        <div id="auth-alert" class="hidden p-3 rounded-lg text-xs font-semibold text-center border"></div>
+
+        <!-- LOGIN FORM -->
+        <form id="login-form" class="space-y-4">
+            <div>
+                <label class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1.5">Mobile Number</label>
+                <div class="relative">
+                    <i class="fa-solid fa-phone absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
+                    <input type="tel" id="login-mobile" placeholder="Enter 10 digit mobile" required class="w-full bg-slate-950 border border-slate-700 rounded-xl py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:border-amber-500 transition-all text-slate-100">
+                </div>
+            </div>
+            <div>
+                <label class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1.5">Password</label>
+                <div class="relative">
+                    <i class="fa-solid fa-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
+                    <input type="password" id="login-password" placeholder="Enter password" required class="w-full bg-slate-950 border border-slate-700 rounded-xl py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:border-amber-500 transition-all text-slate-100">
+                </div>
+            </div>
+            <button type="submit" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all shadow-md active:scale-[0.99] mt-2">
+                Secure Login <i class="fa-solid fa-right-to-bracket ml-1"></i>
+            </button>
+            <p class="text-xs text-slate-400 text-center mt-4">Naya account banana hai? <button type="button" onclick="togglePanels(true)" class="text-amber-400 font-bold hover:underline">Register Karein</button></p>
+        </form>
+
+        <!-- REGISTRATION FORM (HIDDEN BY DEFAULT) -->
+        <form id="register-form" class="space-y-4 hidden">
+            <div>
+                <label class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1.5">Full Name</label>
+                <div class="relative">
+                    <i class="fa-solid fa-user absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
+                    <input type="text" id="reg-name" placeholder="Enter full name" required class="w-full bg-slate-950 border border-slate-700 rounded-xl py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:border-amber-500 transition-all text-slate-100">
+                </div>
+            </div>
+            <div>
+                <label class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1.5">Mobile Number</label>
+                <div class="relative">
+                    <i class="fa-solid fa-phone absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
+                    <input type="tel" id="reg-mobile" placeholder="Enter mobile number" required class="w-full bg-slate-950 border border-slate-700 rounded-xl py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:border-amber-500 transition-all text-slate-100">
+                </div>
+            </div>
+            <div>
+                <label class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1.5">Create Password</label>
+                <div class="relative">
+                    <i class="fa-solid fa-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
+                    <input type="password" id="reg-password" placeholder="Min 6 characters" required class="w-full bg-slate-950 border border-slate-700 rounded-xl py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:border-amber-500 transition-all text-slate-100">
+                </div>
+            </div>
+            <div class="bg-amber-500/5 p-2.5 rounded-lg border border-amber-500/20 text-center">
+                <p class="text-[10px] text-amber-400"><i class="fa-solid fa-circle-info mr-1"></i> Registration ke baad Admin Approval zaroori hai.</p>
+            </div>
+            <button type="submit" class="w-full bg-gradient-to-r from-amber-500 to-red-500 hover:from-amber-400 hover:to-red-400 text-slate-950 py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all shadow-md active:scale-[0.99]">
+                Submit for Approval <i class="fa-solid fa-paper-plane ml-1"></i>
+            </button>
+            <p class="text-xs text-slate-400 text-center mt-4">Pehle se account hai? <button type="button" onclick="togglePanels(false)" class="text-amber-400 font-bold hover:underline">Login Karein</button></p>
+        </form>
+
+    </div>
+
+    <script>
+        // LocalStorage fallback initialize
+        if(!localStorage.getItem("users_db")) {
+            localStorage.setItem("users_db", JSON.stringify([
+                {name: "Player Aj", mobile: "9845101", password: "123", status: "Approved"} // Demo approved user
+            ]));
+        }
+
+        const alertBox = document.getElementById("auth-alert");
+
+        function showAlert(msg, type) {
+            alertBox.innerText = msg;
+            alertBox.className = `p-3 rounded-lg text-xs font-semibold text-center border ${type === 'success' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-red-500/10 text-red-400 border-red-500/20'}`;
+            alertBox.classList.remove("hidden");
+        }
+
+        function togglePanels(showRegister) {
+            alertBox.classList.add("hidden");
+            document.getElementById("login-form").classList.toggle("hidden", showRegister);
+            document.getElementById("register-form").classList.toggle("hidden", !showRegister);
+            document.getElementById("panel-desc").innerText = showRegister ? "Naya account request bhejin, admin approve karega." : "Apne account mein login karein aur khelna shuru karein.";
+        }
+
+        // REGISTRATION SUBMIT
+        document.getElementById("register-form").addEventListener("submit", function(e) {
+            e.preventDefault();
+            let name = document.getElementById("reg-name").value;
+            let mobile = document.getElementById("reg-mobile").value;
+            let password = document.getElementById("reg-password").value;
+
+            let db = JSON.parse(localStorage.getItem("users_db"));
+            
+            if(db.find(u => u.mobile === mobile)) {
+                showAlert("Ye mobile number pehle se registered hai!", "error");
+                return;
+            }
+
+            // Save user with Pending status
+            db.push({ name, mobile, password, status: "Pending" });
+            localStorage.setItem("users_db", JSON.stringify(db));
+
+            showAlert("Registration Request Admin ko bhej di gayi hai! Approval ka wait karein.", "success");
+            this.reset();
+            setTimeout(() => togglePanels(false), 3000);
+        });
+
+        // LOGIN SUBMIT
+        document.getElementById("login-form").addEventListener("submit", function(e) {
+            e.preventDefault();
+            let mobile = document.getElementById("login-mobile").value;
+            let password = document.getElementById("login-password").value;
+
+            let db = JSON.parse(localStorage.getItem("users_db"));
+            let user = db.find(u => u.mobile === mobile && u.password === password);
+
+            if(!user) {
+                showAlert("Wrong Mobile Number or Password!", "error");
+            } else if(user.status === "Pending") {
+                showAlert("Aapka account abhi PENDING hai. Admin approval ka wait karein!", "error");
+            } else if(user.status === "Rejected") {
+                showAlert("Aapki request admin ne REJECT kar di hai.", "error");
+            } else {
+                showAlert("Login Successful! Redirecting...", "success");
+                setTimeout(() => { window.location.href = "dashboard.html"; }, 1000);
+            }
+        });
+    </script>
+</body>
+</html>

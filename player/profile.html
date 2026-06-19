@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Player Profile - KhelBhai Ludo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-900 text-white font-sans antialiased selection:bg-amber-500 selection:text-slate-950">
+
+    <!-- TOP NAVIGATION BAR -->
+    <header class="bg-slate-800 border-b border-slate-700 sticky top-0 z-50 px-4 py-3 shadow-lg">
+        <div class="max-w-2xl mx-auto flex items-center justify-between">
+            <a href="dashboard.html" class="flex items-center space-x-2 text-slate-400 hover:text-amber-400 transition-all font-bold text-sm">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>Back to Dashboard</span>
+            </a>
+            <div class="text-xs font-black text-amber-500 bg-amber-500/10 px-2.5 py-1 rounded-full border border-amber-500/20 uppercase tracking-widest">
+                <i class="fa-solid fa-shield-halved mr-1"></i> Verified Player
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-2xl mx-auto px-3 py-6 space-y-5">
+
+        <!-- PROFILE HERO CARD -->
+        <section class="bg-gradient-to-b from-slate-800 to-slate-800/80 rounded-2xl border border-slate-700/80 p-5 relative overflow-hidden shadow-xl text-center">
+            <!-- Background Glow Decor -->
+            <div class="absolute -top-12 -left-12 w-24 h-24 bg-amber-500/10 rounded-full blur-xl"></div>
+            <div class="absolute -bottom-12 -right-12 w-24 h-24 bg-red-500/10 rounded-full blur-xl"></div>
+
+            <!-- Avatar Element -->
+            <div class="relative inline-block mx-auto">
+                <div class="bg-gradient-to-tr from-amber-500 via-orange-500 to-red-500 h-20 w-20 rounded-full flex items-center justify-center font-black text-slate-900 text-2xl shadow-xl shadow-orange-950/40 border-4 border-slate-800">
+                    KB
+                </div>
+                <span class="absolute bottom-1 right-1 h-4 w-4 bg-emerald-500 border-4 border-slate-800 rounded-full animate-pulse"></span>
+            </div>
+
+            <!-- User Info -->
+            <h2 class="text-xl font-black tracking-wide mt-3 text-slate-100">Player_Aj101</h2>
+            <p class="text-xs text-amber-400 font-semibold tracking-wider bg-slate-950/60 inline-block px-3 py-1 rounded-full border border-slate-700/60 mt-1.5">
+                <i class="fa-solid fa-id-badge mr-1"></i> UID: 9845101
+            </p>
+
+            <!-- Mini Stats Row -->
+            <div class="grid grid-cols-3 gap-2 mt-5 border-t border-slate-700/50 pt-4">
+                <div class="text-center">
+                    <p class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Games Played</p>
+                    <p class="text-base font-black text-slate-200 mt-0.5">142</p>
+                </div>
+                <div class="text-center border-x border-slate-700/40">
+                    <p class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Total Wins</p>
+                    <p class="text-base font-black text-emerald-400 mt-0.5">89</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Win Rate</p>
+                    <p class="text-base font-black text-blue-400 mt-0.5">62.6%</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- WALLET BREAKDOWN (REALTIME) -->
+        <section class="bg-slate-800/90 rounded-2xl border border-slate-700/80 p-4 shadow-lg">
+            <h3 class="text-xs font-black text-slate-400 tracking-wider uppercase mb-3 flex items-center">
+                <i class="fa-solid fa-wallet text-amber-500 mr-2"></i> Wallet Balance Breakdown
+            </h3>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                    <span class="text-[10px] text-slate-400 uppercase font-bold block">Playable Balance</span>
+                    <span id="playable-display" class="text-lg font-black text-slate-200 block mt-0.5">₹0.00</span>
+                    <span class="text-[9px] text-slate-500 block mt-1 leading-tight">(Bonus + Deposits)</span>
+                </div>
+                <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                    <span class="text-[10px] text-slate-400 uppercase font-bold block">Withdrawable Cash</span>
+                    <span id="withdrawable-display" class="text-lg font-black text-emerald-400 block mt-0.5">₹0.00</span>
+                    <span class="text-[9px] text-emerald-500/70 block mt-1 leading-tight">(Sirf Winning Amount)</span>
+                </div>
+            </div>
+
+            <div class="mt-4 grid grid-cols-2 gap-2">
+                <a href="wallet.html" class="bg-emerald-600 hover:bg-emerald-500 text-center py-2 rounded-lg font-bold text-xs uppercase tracking-wider transition-all shadow-md">
+                    <i class="fa-solid fa-circle-plus mr-1"></i> Add Money
+                </a>
+                <a href="wallet.html" class="bg-slate-700 hover:bg-slate-600 text-center py-2 rounded-lg font-bold text-xs uppercase tracking-wider transition-all border border-slate-600 text-slate-200">
+                    <i class="fa-solid fa-money-bill-transfer mr-1"></i> Redeem Winnings
+                </a>
+            </div>
+        </section>
+
+        <!-- LIVE REFERRAL CHAIN STATUS -->
+        <section class="bg-slate-800/90 rounded-2xl border border-slate-700/80 p-4 shadow-lg">
+            <div class="flex justify-between items-start mb-1">
+                <div>
+                    <h3 class="text-xs font-black text-amber-400 tracking-wider uppercase flex items-center">
+                        <i class="fa-solid fa-users text-amber-500 mr-2"></i> Your Referral Status
+                    </h3>
+                    <p class="text-[11px] text-slate-400 mt-0.5">Doston ko join karwayein aur milkar kamaein.</p>
+                </div>
+                <div class="bg-slate-950 px-2.5 py-1 rounded-lg border border-slate-800 text-right">
+                    <span class="text-[9px] text-slate-500 block uppercase font-bold">Total Invites</span>
+                    <span id="referral-count-display" class="text-xs font-black text-amber-400 block">0 Players</span>
+                </div>
+            </div>
+
+            <!-- Referral Code Box -->
+            <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex items-center justify-between mt-3">
+                <div class="pl-1">
+                    <span class="text-[9px] text-slate-500 uppercase font-bold block">Your Referral Code</span>
+                    <span class="text-sm font-black text-slate-300 tracking-widest block uppercase">KB-AJ101-LUDO</span>
+                </div>
+                <button onclick="copyReferralCode()" class="bg-slate-800 hover:bg-slate-700 active:scale-95 text-amber-400 px-3 py-1.5 rounded-lg font-bold text-xs uppercase tracking-wider transition-all border border-slate-700 flex items-center space-x-1">
+                    <i class="fa-solid fa-copy"></i> <span id="copy-text">Copy</span>
+                </button>
+            </div>
+
+            <!-- Milestone Tracker Info -->
+            <div class="mt-4 border-t border-slate-700/50 pt-3 space-y-2">
+                <span class="text-[10px] text-slate-400 uppercase font-black block tracking-wider"><i class="fa-solid fa-gift text-red-400 mr-1"></i> Next Milestone Rewards Table:</span>
+                
+                <div class="grid grid-cols-2 gap-2 text-[11px]">
+                    <div class="bg-slate-900/60 p-2 rounded border border-slate-800 flex justify-between">
+                        <span class="text-slate-400">1st Friend Join</span>
+                        <span class="font-bold text-emerald-400">+₹100</span>
+                    </div>
+                    <div class="bg-slate-900/60 p-2 rounded border border-slate-800 flex justify-between">
+                        <span class="text-slate-400">2nd Friend Join</span>
+                        <span class="font-bold text-emerald-400">+₹200</span>
+                    </div>
+                    <div class="bg-slate-900/60 p-2 rounded border border-slate-800 flex justify-between">
+                        <span class="text-slate-400">5th Friend onwards</span>
+                        <span class="font-bold text-emerald-400">+₹100 / Each</span>
+                    </div>
+                    <div class="bg-amber-500/5 p-2 rounded border border-amber-500/20 flex justify-between">
+                        <span class="text-amber-400 font-medium">10th Friend Mega</span>
+                        <span class="font-black text-amber-400">+₹1000</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ACCOUNT SETTINGS LIST -->
+        <section class="bg-slate-800/40 rounded-2xl border border-slate-700/50 overflow-hidden divide-y divide-slate-700/60 shadow-md">
+            <a href="#kyc" class="flex items-center justify-between px-4 py-3 hover:bg-slate-800 text-slate-300 hover:text-white transition-all text-sm">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-user-check text-slate-400 w-4"></i>
+                    <span>Complete KYC Verification</span>
+                </div>
+                <i class="fa-solid fa-angle-right text-xs text-slate-500"></i>
+            </a>
+            <a href="#bank-details" class="flex items-center justify-between px-4 py-3 hover:bg-slate-800 text-slate-300 hover:text-white transition-all text-sm">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-building-columns text-slate-400 w-4"></i>
+                    <span>Bank & UPI Settings</span>
+                </div>
+                <i class="fa-solid fa-angle-right text-xs text-slate-500"></i>
+            </a>
+            <a href="logout.html" class="flex items-center justify-between px-4 py-3 hover:bg-red-950/20 text-red-400 transition-all text-sm font-semibold">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-right-from-bracket w-4"></i>
+                    <span>Logout from this Device</span>
+                </div>
+                <i class="fa-solid fa-angle-right text-xs opacity-60"></i>
+            </a>
+        </section>
+
+    </main>
+
+    <!-- LIVE DATA RENDER SCRIPT -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Fetch directly from localStorage sync with dashboard
+            let playable = parseFloat(localStorage.getItem("playable_balance") || "101.00");
+            let withdrawable = parseFloat(localStorage.getItem("withdrawable_balance") || "0.00");
+            let refCount = parseInt(localStorage.getItem("referral_count") || "0");
+
+            // Render details
+            document.getElementById("playable-display").innerText = "₹" + playable.toFixed(2);
+            document.getElementById("withdrawable-display").innerText = "₹" + withdrawable.toFixed(2);
+            document.getElementById("referral-count-display").innerText = refCount + " Players";
+        });
+
+        // Referral copy function
+        function copyReferralCode() {
+            const code = "KB-AJ101-LUDO";
+            navigator.clipboard.writeText(code).then(() => {
+                const copyText = document.getElementById("copy-text");
+                copyText.innerText = "Copied!";
+                copyText.classList.add("text-emerald-400");
+                
+                setTimeout(() => {
+                    copyText.innerText = "Copy";
+                    copyText.classList.remove("text-emerald-400");
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>

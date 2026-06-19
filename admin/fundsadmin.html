@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KhelBhai - Ultimate Admin Terminal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <a href="admindashboard.html" class="text-amber-400 font-bold text-xs"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</a>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans tracking-wide">
+
+    <header class="bg-slate-900 border-b border-slate-800 p-4 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-amber-500 text-slate-950 p-2 rounded-xl font-black text-xs tracking-wider">CORE</div>
+                <h1 class="text-xl font-black tracking-widest text-amber-400 uppercase">KhelBhai Control Room</h1>
+            </div>
+            <div class="text-xs font-mono bg-slate-950 px-3 py-1.5 rounded-lg border border-slate-800 text-emerald-400">
+                <i class="fa-solid fa-circle text-[9px] mr-1.5 animate-pulse"></i> LIVE SERVER CONTROL
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto p-4 lg:p-6 space-y-8">
+        
+        <!-- COUNTER METRICS DASHBOARD ROW -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl space-y-1">
+                <p class="text-[10px] text-slate-500 uppercase font-black">Pending Deposits</p>
+                <h3 id="stat-dep-count" class="text-2xl font-black text-emerald-400">0 Requests</h3>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl space-y-1">
+                <p class="text-[10px] text-slate-500 uppercase font-black">Pending Withdraws</p>
+                <h3 id="stat-with-count" class="text-2xl font-black text-amber-500">0 Requests</h3>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl space-y-1 col-span-2">
+                <p class="text-[10px] text-slate-500 uppercase font-black">Quick Database Utilities</p>
+                <button onclick="clearAllLogs()" class="mt-1 bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white px-3 py-1 rounded text-xs transition-all font-bold border border-red-500/30">
+                    <i class="fa-solid fa-trash-can mr-1"></i> Clear Processing DBs
+                </button>
+            </div>
+        </div>
+
+        <!-- TWO MAIN COLUMN MATRIX LAYOUT GRID -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            
+            <!-- COLUMN 1: LIVE DEPOSIT REQUESTS BOX -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl">
+                <div class="p-4 bg-slate-900/80 border-b border-slate-800/80 flex justify-between items-center">
+                    <h2 class="text-sm font-black text-emerald-400 uppercase tracking-widest"><i class="fa-solid fa-file-invoice-dollar mr-1"></i> Deposit Requests (UTR Verification)</h2>
+                    <span class="bg-emerald-500/10 text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-500/20">Live Sync</span>
+                </div>
+                
+                <div id="deposit-container" class="p-4 divide-y divide-slate-800 max-h-[500px] overflow-y-auto space-y-4">
+                    <!-- Dynamic Rows Loaded Here -->
+                </div>
+            </div>
+
+            <!-- COLUMN 2: LIVE WITHDRAW REQUESTS BOX -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl">
+                <div class="p-4 bg-slate-900/80 border-b border-slate-800/80 flex justify-between items-center">
+                    <h2 class="text-sm font-black text-amber-500 uppercase tracking-widest"><i class="fa-solid fa-money-bill-transfer mr-1"></i> Withdrawal Requests (Payouts)</h2>
+                    <span class="bg-amber-500/10 text-amber-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-amber-500/20">Action Required</span>
+                </div>
+                
+                <div id="withdraw-container" class="p-4 divide-y divide-slate-800 max-h-[500px] overflow-y-auto space-y-4">
+                    <!-- Dynamic Rows Loaded Here -->
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            loadControlPanelData();
+        });
+
+        function loadControlPanelData() {
+            let depositDB = JSON.parse(localStorage.getItem("deposit_db") || "[]");
+            let withdrawDB = JSON.parse(localStorage.getItem("withdraw_db") || "[]");
+
+            // Filter out pending states
+            let pendingDeposits = depositDB.filter(item => item.status === "Pending");
+            let pendingWithdraws = withdrawDB.filter(item => item.status === "Pending");
+
+            // Metric Displays
+            document.getElementById("stat-dep-count").innerText = pendingDeposits.length + " Requests";
+            document.getElementById("stat-with-count").innerText = pendingWithdraws.length + " Requests";
+
+            // 1. RENDER DEPOSIT COMPONENT ENGINE
+            const depContainer = document.getElementById("deposit-container");
+            depContainer.innerHTML = "";
+
+            if (pendingDeposits.length === 0) {
+                depContainer.innerHTML = `<p class="text-xs text-slate-500 text-center py-8 font-medium">🎉 Koi bhi naya deposit request pending nahi hai!</p>`;
+            } else {
+                pendingDeposits.forEach((item, index) => {
+                    let element = document.createElement("div");
+                    element.className = "pt-3 first:pt-0 space-y-3";
+                    element.innerHTML = `
+                        <div class="flex justify-between items-start bg-slate-950 p-3 rounded-xl border border-slate-800">
+                            <div class="space-y-1">
+                                <p class="text-xs text-slate-400 font-bold">User: <span class="text-white">${item.player}</span></p>
+                                <p class="text-sm font-black text-emerald-400">Amount: ₹${parseFloat(item.amount).toFixed(2)}</p>
+                                <p class="text-xs text-slate-300 font-mono tracking-wider">UTR: <span class="text-amber-400 font-bold select-all">${item.utr}</span></p>
+                                <p class="text-[10px] text-slate-500">${item.date}</p>
+                            </div>
+                            <div class="flex flex-col space-y-2">
+                                <button onclick="actionDeposit('${item.utr}', 'Approve')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-3 py-1.5 rounded-lg text-xs transition-all uppercase tracking-wide">
+                                    Approve
+                                </button>
+                                <button onclick="actionDeposit('${item.utr}', 'Reject')" class="bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white font-bold px-3 py-1.5 rounded-lg text-xs transition-all uppercase tracking-wide border border-red-500/20">
+                                    Reject
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    depContainer.appendChild(element);
+                });
+            }
+
+            // 2. RENDER WITHDRAW COMPONENT ENGINE WITH DYNAMIC DETAILS WRAPPER
+            const withContainer = document.getElementById("withdraw-container");
+            withContainer.innerHTML = "";
+
+            if (pendingWithdraws.length === 0) {
+                withContainer.innerHTML = `<p class="text-xs text-slate-500 text-center py-8 font-medium">🎉 All cashouts processed! No pending withdrawals.</p>`;
+            } else {
+                pendingWithdraws.forEach((item) => {
+                    let element = document.createElement("div");
+                    element.className = "pt-3 first:pt-0 space-y-3";
+                    
+                    // Create account detail sub-template based on custom text payload submitted
+                    let targetAcc = item.account;
+                    let accountDetailsHtml = "";
+                    
+                    if(targetAcc.ifsc === "SAVED_PROFILE") {
+                        accountDetailsHtml = `
+                            <div class="bg-slate-900/80 p-2 rounded border border-slate-800 text-[11px] text-slate-300 space-y-0.5 mt-1">
+                                <p class="text-[9px] text-amber-400 font-black uppercase"><i class="fa-solid fa-address-card"></i> Pay to User's Saved Account:</p>
+                                <p>Bank: <span class="text-white font-bold">${targetAcc.bankName}</span> | Holder: <span class="text-white font-bold">${targetAcc.holderName}</span></p>
+                                <p>A/C No: <span class="text-white font-mono font-bold">${targetAcc.accountNo}</span></p>
+                                <p>UPI ID: <span class="text-amber-400 font-mono font-bold select-all">${targetAcc.upiId}</span></p>
+                            </div>
+                        `;
+                    } else {
+                        accountDetailsHtml = `
+                            <div class="bg-amber-500/5 p-2 rounded border border-amber-500/20 text-[11px] text-slate-300 space-y-0.5 mt-1">
+                                <p class="text-[9px] text-red-400 font-black uppercase"><i class="fa-solid fa-triangle-exclamation"></i> Pay to Custom Input Account:</p>
+                                <p>Bank: <span class="text-white font-bold">${targetAcc.bankName}</span> | Holder: <span class="text-white font-bold">${targetAcc.holderName}</span></p>
+                                <p>A/C: <span class="text-white font-mono font-bold">${targetAcc.accountNo}</span> | IFSC: <span class="text-white font-mono font-bold">${targetAcc.ifsc}</span></p>
+                                <p>UPI ID: <span class="text-amber-400 font-mono font-bold select-all">${targetAcc.upiId}</span></p>
+                            </div>
+                        `;
+                    }
+
+                    element.innerHTML = `
+                        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
+                            <div class="flex justify-between items-start">
+                                <div class="space-y-0.5">
+                                    <div class="flex items-center space-x-1.5">
+                                        <span class="text-xs text-slate-400 font-bold">User: <span class="text-white">${item.player}</span></span>
+                                        <span class="text-[9px] bg-slate-800 text-slate-400 px-1.5 py-0.2 rounded font-mono">${item.requestID}</span>
+                                    </div>
+                                    <p class="text-base font-black text-amber-500">Payout Amt: ₹${parseFloat(item.amount).toFixed(2)}</p>
+                                    <p class="text-[10px] text-slate-500">${item.date}</p>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <button onclick="actionWithdraw('${item.requestID}', 'Approve')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black px-3 py-2 rounded-lg text-xs transition-all uppercase tracking-wide">
+                                        Approve
+                                    </button>
+                                    <button onclick="actionWithdraw('${item.requestID}', 'Reject')" class="bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white font-bold px-3 py-2 rounded-lg text-xs transition-all uppercase tracking-wide border border-red-500/20">
+                                        Reject
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Dynamic Account Data Node -->
+                            ${accountDetailsHtml}
+                        </div>
+                    `;
+                    withContainer.appendChild(element);
+                });
+            }
+        }
+
+        // DEPOSIT APPROVAL UTILITY FUNCTION
+        function actionDeposit(targetUtr, actionType) {
+            let depositDB = JSON.parse(localStorage.getItem("deposit_db") || "[]");
+            let targetIndex = depositDB.findIndex(item => item.utr === targetUtr);
+
+            if (targetIndex !== -1) {
+                if (actionType === "Approve") {
+                    depositDB[targetIndex].status = "Approved";
+                    
+                    // Credit system variables
+                    let addedAmt = parseFloat(depositDB[targetIndex].amount);
+                    let currentPlayable = parseFloat(localStorage.getItem("playable_balance") || 0);
+                    localStorage.setItem("playable_balance", (currentPlayable + addedAmt).toFixed(2));
+                    
+                    alert("✅ Deposit Request Approved! Balance successfully synchronised with user's core ledger.");
+                } else {
+                    depositDB[targetIndex].status = "Rejected";
+                    alert("❌ Deposit Request Rejected!");
+                }
+                
+                localStorage.setItem("deposit_db", JSON.stringify(depositDB));
+                loadControlPanelData();
+            }
+        }
+
+        // WITHDRAWAL CONTROL UTILITY ACTION
+        function actionWithdraw(reqID, actionType) {
+            let withdrawDB = JSON.parse(localStorage.getItem("withdraw_db") || "[]");
+            let targetIndex = withdrawDB.findIndex(item => item.requestID === reqID);
+
+            if (targetIndex !== -1) {
+                let targetRequest = withdrawDB[targetIndex];
+
+                if (actionType === "Approve") {
+                    withdrawDB[targetIndex].status = "Approved";
+                    alert("✅ Payout Request Approved! Mark as Paid successfully.");
+                } else {
+                    withdrawDB[targetIndex].status = "Rejected";
+                    
+                    // REVERSE CORES FUND ON REJECTION STATE
+                    let returnAmt = parseFloat(targetRequest.amount);
+                    let currentWithdrawable = parseFloat(localStorage.getItem("withdrawable_balance") || 0);
+                    localStorage.setItem("withdrawable_balance", (currentWithdrawable + returnAmt).toFixed(2));
+                    
+                    alert("❌ Withdrawal Rejected! Funds reversed back to user's Winning ledger automatically.");
+                }
+
+                localStorage.setItem("withdraw_db", JSON.stringify(withdrawDB));
+                loadControlPanelData();
+            }
+        }
+
+        function clearAllLogs() {
+            if (confirm("⚠️ Kya aap sach mein processing state records clean karna chahte hain?")) {
+                localStorage.removeItem("deposit_db");
+                localStorage.removeItem("withdraw_db");
+                loadControlPanelData();
+            }
+        }
+    </script>
+</body>
+</html>

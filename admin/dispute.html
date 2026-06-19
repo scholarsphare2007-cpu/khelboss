@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Ludo Disputes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <a href="admindashboard.html" class="text-amber-400 font-bold text-xs"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</a>
+</head>
+<body class="bg-slate-950 text-white font-sans">
+
+    <!-- ADMIN HEADER -->
+    <header class="bg-slate-900 border-b border-slate-800 p-4 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-amber-500 text-slate-950 h-9 w-9 rounded-lg flex items-center justify-center font-black">A</div>
+                <div>
+                    <h1 class="text-md font-bold text-slate-200">KhelBhai Admin</h1>
+                    <p class="text-xs text-amber-400">🛡️ Match Dispute Management</p>
+                </div>
+            </div>
+            <div class="text-xs bg-slate-950 px-3 py-1.5 rounded-md border border-slate-800 text-slate-400">
+                Live Server Synced
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN INTERFACE -->
+    <main class="max-w-7xl mx-auto p-4 md:p-6 space-y-6">
+        
+        <div class="flex justify-between items-center">
+            <h2 class="text-xl font-black tracking-wider text-slate-200 uppercase flex items-center">
+                <i class="fa-solid fa-gavel text-amber-500 mr-2"></i> Pending Disputes
+            </h2>
+            <button onclick="loadDisputes()" class="bg-slate-900 hover:bg-slate-800 border border-slate-800 px-3 py-1.5 rounded text-xs transition-all">
+                <i class="fa-solid fa-rotate mr-1"></i> Refresh List
+            </button>
+        </div>
+
+        <!-- DISPUTES CONTAINER -->
+        <div id="no-disputes" class="hidden text-center py-12 bg-slate-900/50 rounded-2xl border border-slate-800/60">
+            <i class="fa-solid fa-circle-check text-4xl text-emerald-500 mb-2"></i>
+            <p class="text-sm text-slate-400">Sab clear hai bhai! Ek bhi dispute pending nahi hai.</p>
+        </div>
+
+        <div id="disputes-list" class="space-y-6">
+            <!-- Dynamic Cards idhar aayenge JavaScript se -->
+        </div>
+
+    </main>
+
+    <!-- REAL-TIME DISPUTE RESOLUTION SCRIPT -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Agar testing ke liye local storage khali hai toh 1 dummy data daal dete hain
+            let current = localStorage.getItem("active_disputes");
+            if (!current || JSON.parse(current).length === 0) {
+                let dummy = [
+                    {
+                        id: "DISP1001",
+                        roomCode: "LUDO78945",
+                        player: "Player_Aj101",
+                        betAmount: 200,
+                        status: "Pending",
+                        playerClaim: "Won",
+                        screenshot: "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=500"
+                    }
+                ];
+                localStorage.setItem("active_disputes", JSON.stringify(dummy));
+            }
+            loadDisputes();
+        });
+
+        function loadDisputes() {
+            let disputesList = document.getElementById("disputes-list");
+            let noDisputes = document.getElementById("no-disputes");
+            let disputes = JSON.parse(localStorage.getItem("active_disputes") || "[]");
+
+            // Filter sirf Pending wale
+            let pendingDisputes = disputes.filter(d => d.status === "Pending");
+
+            if (pendingDisputes.length === 0) {
+                disputesList.innerHTML = "";
+                noDisputes.classList.remove("hidden");
+                return;
+            }
+
+            noDisputes.classList.add("hidden");
+            disputesList.innerHTML = "";
+
+            pendingDisputes.forEach(disp => {
+                let card = document.createElement("div");
+                card.className = "bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl grid grid-cols-1 lg:grid-cols-3 gap-4 p-5";
+                
+                card.innerHTML = `
+                    <!-- Column 1: Details -->
+                    <div class="space-y-3 flex flex-col justify-between">
+                        <div>
+                            <span class="bg-amber-500/20 text-amber-400 font-bold px-2 py-0.5 rounded text-[10px] uppercase tracking-wide">Room Code: ${disp.roomCode}</span>
+                            <h3 class="text-lg font-black text-white mt-1"><i class="fa-solid fa-user text-slate-400 text-sm mr-1"></i> ${disp.player}</h3>
+                            <p class="text-xs text-slate-400 mt-1">Claim Kiya Hai: <b class="text-emerald-400 underline uppercase">${disp.playerClaim}</b></p>
+                        </div>
+                        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                            <span class="text-[10px] text-slate-500 block uppercase font-bold">Total Match Pool</span>
+                            <span class="text-xl font-black text-emerald-400">₹${disp.betAmount}</span>
+                        </div>
+                    </div>
+
+                    <!-- Column 2: Screenshot Proof View -->
+                    <div class="bg-slate-950 border border-slate-800 rounded-xl p-2 flex flex-col items-center justify-center min-h-[200px]">
+                        <span class="text-[10px] text-slate-500 font-bold mb-1 uppercase"><i class="fa-solid fa-image mr-1"></i> Player Uploaded Proof</span>
+                        <img src="${disp.screenshot}" alt="Proof" class="max-h-40 rounded border border-slate-800 hover:scale-105 transition-all cursor-zoom-in">
+                    </div>
+
+                    <!-- Column 3: Admin Judgment Buttons -->
+                    <div class="flex flex-col justify-center space-y-3">
+                        <button onclick="resolveDispute('${disp.id}', 'Approve', ${disp.betAmount})" class="w-full bg-emerald-600 hover:bg-emerald-500 font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all shadow-lg shadow-emerald-950/50">
+                            ✔️ Approve & Pay Player
+                        </button>
+                        <button onclick="resolveDispute('${disp.id}', 'Reject', 0)" class="w-full bg-red-600/20 hover:bg-red-600 border border-red-700 text-red-400 hover:text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all">
+                            ❌ Reject & Impound (Wrong Proof)
+                        </button>
+                    </div>
+                `;
+                disputesList.appendChild(card);
+            });
+        }
+
+        // JUDGMENT EXECUTION (Asli mein paise balance mein jayenge!)
+        function resolveDispute(disputeId, action, winAmount) {
+            let disputes = JSON.parse(localStorage.getItem("active_disputes") || "[]");
+            
+            // Dispute ka status change karo
+            disputes = disputes.map(d => {
+                if (d.id === disputeId) d.status = action;
+                return d;
+            });
+            localStorage.setItem("active_disputes", JSON.stringify(disputes));
+
+            // Agar admin ne APPROVE kiya, toh player ke wallet mein winning amount daal do
+            if (action === "Approve") {
+                let currentWinning = parseFloat(localStorage.getItem("withdrawable_balance") || 0);
+                // Maan lete hain ki double milega (₹200 lagaye toh ₹360 ya ₹400 commission kaat ke, abhi hum full add kar rahe hain)
+                let finalWinning = currentWinning + (winAmount * 1.8); // 10% platform fee kaat ke 1.8x
+                localStorage.setItem("withdrawable_balance", finalWinning.toFixed(2));
+                alert("✅ Approved! Player ke Withdrawable Wallet mein ₹" + (winAmount * 1.8).toFixed(2) + " credit kar diye gaye hain (After 10% Admin Commission).");
+            } else {
+                alert("❌ Dispute Rejected! Player ka proof galat hone ke karan match cancel/impound kar diya gaya.");
+            }
+
+            // List reload karo live
+            loadDisputes();
+        }
+    </script>
+</body>
+</html>

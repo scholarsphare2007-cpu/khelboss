@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KhelBoss - Central Control Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 text-white font-sans min-h-screen flex flex-col">
+
+    <!-- Top Navbar -->
+    <header class="bg-slate-900 border-b border-slate-800 px-6 py-4 flex justify-between items-center shadow-md">
+        <div class="flex items-center space-x-3">
+            <div class="bg-amber-500 text-slate-950 p-2 rounded-xl font-black text-xs tracking-wider">KHELBOSS</div>
+            <h1 class="text-sm font-bold text-slate-300">Central Control Panel</h1>
+        </div>
+        <div class="flex items-center space-x-4">
+            <div class="text-right">
+                <p id="admin-display-name" class="text-xs font-bold text-white">Admin ID: ...</p>
+                <p id="admin-display-role" class="text-[10px] text-amber-400 font-mono tracking-widest uppercase">Role: ...</p>
+            </div>
+            <button onclick="handleLogout()" class="bg-slate-800 hover:bg-rose-950 hover:text-rose-400 border border-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold transition-all">
+                <i class="fa-solid fa-power-off mr-1"></i> Logout
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Dynamic Interface -->
+    <main class="flex-1 max-w-5xl w-full mx-auto p-6 space-y-6">
+        
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-center space-y-2">
+            <h2 class="text-2xl font-black text-slate-100">🎯 SYSTEM MANAGEMENT PORTAL</h2>
+            <p class="text-xs text-slate-400 max-w-xl mx-auto">Aapke assigned system panel niche active hain. Aap unhe click karke user requests handle kar sakte hain.</p>
+        </div>
+
+        <!-- 3 MAIN ARROWS FOR 3 SUB-PANELS -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            
+            <!-- 1. FUNDS MANAGEMENT LINK -->
+            <div id="card-FUNDS" class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between space-y-4 shadow-xl relative overflow-hidden">
+                <div class="space-y-2">
+                    <div class="flex justify-between items-start">
+                        <div class="bg-emerald-950 text-emerald-400 p-3 rounded-xl border border-emerald-800/60">
+                            <i class="fa-solid fa-money-bill-transfer text-lg"></i>
+                        </div>
+                        <span class="text-[10px] font-mono uppercase bg-slate-950 px-2 py-0.5 rounded text-slate-500 border border-slate-800">Dept 01</span>
+                    </div>
+                    <h3 class="text-base font-bold text-slate-200">Funds & Financials</h3>
+                    <p class="text-xs text-slate-400">User ke automatic deposits (UTR verification) aur withdrawal requests ko approve/reject karne ka portal.</p>
+                </div>
+                <a id="btn-FUNDS" href="fundsadmin.html" class="block w-full text-center bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all">
+                    Open Funds Dashboard <i class="fa-solid fa-arrow-right ml-1"></i>
+                </a>
+            </div>
+
+            <!-- 2. REGISTRATION MANAGEMENT LINK -->
+            <div id="card-REGISTRATION" class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between space-y-4 shadow-xl relative overflow-hidden">
+                <div class="space-y-2">
+                    <div class="flex justify-between items-start">
+                        <div class="bg-blue-950 text-blue-400 p-3 rounded-xl border border-blue-800/60">
+                            <i class="fa-solid fa-users-gear text-lg"></i>
+                        </div>
+                        <span class="text-[10px] font-mono uppercase bg-slate-950 px-2 py-0.5 rounded text-slate-500 border border-slate-800">Dept 02</span>
+                    </div>
+                    <h3 class="text-base font-bold text-slate-200">Player Registrations</h3>
+                    <p class="text-xs text-slate-400">Naye players ka account validation, block/unblock controls aur unke overall basic rules and status logs matrix.</p>
+                </div>
+                <a id="btn-REGISTRATION" href="registrationadmin.html" class="block w-full text-center bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all">
+                    Open Registration Panel <i class="fa-solid fa-arrow-right ml-1"></i>
+                </a>
+            </div>
+
+            <!-- 3. DISPUTE MANAGEMENT LINK -->
+            <div id="card-DISPUTE" class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between space-y-4 shadow-xl relative overflow-hidden">
+                <div class="space-y-2">
+                    <div class="flex justify-between items-start">
+                        <div class="bg-rose-950 text-rose-400 p-3 rounded-xl border border-rose-800/60">
+                            <i class="fa-solid fa-triangle-exclamation text-lg"></i>
+                        </div>
+                        <span class="text-[10px] font-mono uppercase bg-slate-950 px-2 py-0.5 rounded text-slate-500 border border-slate-800">Dept 03</span>
+                    </div>
+                    <h3 class="text-base font-bold text-slate-200">Dispute & Support</h3>
+                    <p class="text-xs text-slate-400">Game ke andar aane waali shikayatein, system logs discrepancies aur player issue tickets solve karne ka control board.</p>
+                </div>
+                <a id="btn-DISPUTE" href="dispute.html" class="block w-full text-center bg-rose-600 hover:bg-rose-500 text-white font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all">
+                    Open Dispute Board <i class="fa-solid fa-arrow-right ml-1"></i>
+                </a>
+            </div>
+
+        </div>
+
+    </main>
+
+    <footer class="bg-slate-900/40 p-4 border-t border-slate-800/60 text-center text-xs text-slate-500 font-mono">
+        &copy; 2026 KhelBoss Infrastructure System - Restricted Authorization Only.
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Check Security Session
+            let currentRole = localStorage.getItem("current_admin_role");
+            let currentName = localStorage.getItem("current_admin_name");
+
+            if (!currentRole) {
+                alert("⚠️ Session Unauthorized! Pehle login karein.");
+                window.location.href = "adminlogin.html";
+                return;
+            }
+
+            // Display Info
+            document.getElementById("admin-display-name").innerText = "Admin ID: " + currentName;
+            document.getElementById("admin-display-role").innerText = "Role: " + currentRole;
+
+            // Apply Role-Based Restrictions
+            if (currentRole !== "MASTER") {
+                let rolesList = ["FUNDS", "REGISTRATION", "DISPUTE"];
+                rolesList.forEach(role => {
+                    if (currentRole !== role) {
+                        // Deactivate elements visually
+                        let card = document.getElementById("card-" + role);
+                        let btn = document.getElementById("btn-" + role);
+                        
+                        card.classList.add("opacity-30", "pointer-events-none");
+                        btn.innerText = "🔒 Access Denied";
+                        btn.className = "block w-full text-center bg-slate-950 text-slate-600 font-bold py-2.5 rounded-xl text-xs cursor-not-allowed";
+                        btn.removeAttribute("href");
+                    }
+                });
+            }
+        });
+
+        function handleLogout() {
+            localStorage.removeItem("current_admin_role");
+            localStorage.removeItem("current_admin_name");
+            alert("👋 Logged out successfully!");
+            window.location.href = "adminlogin.html";
+        }
+    </script>
+</body>
+</html>

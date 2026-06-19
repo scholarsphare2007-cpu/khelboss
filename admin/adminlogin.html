@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KhelBoss - Staff Authentication Center</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 text-white font-sans flex items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl space-y-6">
+        <div class="text-center space-y-2">
+            <h1 class="text-2xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-rose-500 uppercase">
+                <i class="fa-solid fa-user-shield mr-2"></i>KhelBoss Admin
+            </h1>
+            <p class="text-xs text-slate-400">Staff & Sub-Admin Control Login Center</p>
+        </div>
+
+        <form id="admin-login-form" onsubmit="handleAdminLogin(event)" class="space-y-4">
+            <div class="space-y-1">
+                <label class="text-xs text-slate-400 font-bold uppercase">Staff Admin ID</label>
+                <div class="relative">
+                    <i class="fa-solid fa-user absolute left-3.5 top-3.5 text-slate-500 text-xs"></i>
+                    <input id="admin-id" type="text" placeholder="Enter Admin ID" class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-3 text-xs focus:outline-none focus:border-amber-500 font-bold text-slate-200" required>
+                </div>
+            </div>
+
+            <div class="space-y-1">
+                <label class="text-xs text-slate-400 font-bold uppercase">Secret Password</label>
+                <div class="relative">
+                    <i class="fa-solid fa-lock absolute left-3.5 top-3.5 text-slate-500 text-xs"></i>
+                    <input id="admin-pass" type="password" placeholder="••••••••" class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-3 text-xs focus:outline-none focus:border-amber-500 font-bold text-slate-200" required>
+                </div>
+            </div>
+
+            <button type="submit" class="w-full bg-gradient-to-r from-amber-500 to-rose-600 hover:from-amber-400 hover:to-rose-500 text-slate-950 font-black py-3 rounded-xl text-xs uppercase tracking-wider transition-all shadow-lg shadow-rose-950/50 mt-2">
+                Authorize & Secure Login <i class="fa-solid fa-right-to-bracket ml-1"></i>
+            </button>
+        </form>
+    </div>
+
+    <script>
+        function handleAdminLogin(e) {
+            e.preventDefault();
+            let adminId = document.getElementById("admin-id").value.trim();
+            let adminPass = document.getElementById("admin-pass").value.trim();
+
+            let role = "";
+
+            // Simple Database mapping
+            if(adminId === "masteradmin" && adminPass === "master@khelboss") {
+                role = "MASTER";
+            } else if(adminId === "fundsadmin" && adminPass === "funds@khelboss") {
+                role = "FUNDS";
+            } else if(adminId === "regadmin" && adminPass === "reg@khelboss") {
+                role = "REGISTRATION";
+            } else if(adminId === "disputeadmin" && adminPass === "dispute@khelboss") {
+                role = "DISPUTE";
+            } else {
+                alert("❌ Galat Admin ID ya Password! Please try again.");
+                return;
+            }
+
+            // Session check store kar rahe hain
+            localStorage.setItem("current_admin_role", role);
+            localStorage.setItem("current_admin_name", adminId);
+            
+            alert("✅ Welcome Back! Access Granted as: " + role);
+            window.location.href = "admindashboard.html"; // Dashboard par bhej rahe hain
+        }
+    </script>
+</body>
+</html>
